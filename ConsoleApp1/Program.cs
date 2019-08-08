@@ -74,7 +74,7 @@ namespace ConsoleApp1
             Console.WriteLine("radom money balance:{0}", Money);
             randNum(randomCount);
 
-            this.RealContainer.Sort(delegate (double a, double b) { return (new Random()).Next(-1, 1); });
+            RealContainer=RealContainer.OrderBy(x => Guid.NewGuid()).ToList();
         }
 
         //拆分数值生成若干个和等于该数值随机值
@@ -136,7 +136,7 @@ namespace ConsoleApp1
             for (int i = 0; i < redPackage.RealContainer.Count; i++)
             {
                 sum += redPackage.RealContainer[i];
-                Console.WriteLine("index:{0},money:{1},send money:{2}", i, redPackage.RealContainer[i], sum);
+                Console.WriteLine("第:{0}个,本次领取的金额:{1},已经领取的总金额:{2}", i, redPackage.RealContainer[i], sum);
             }
             Console.ReadKey();
         }
