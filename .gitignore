@@ -23,6 +23,7 @@ bld/
 [Bb]in/
 [Oo]bj/
 [Ll]og/
+.DS_Store
 
 # Visual Studio 2015 cache/options directory
 .vs/
@@ -47,7 +48,7 @@ project.lock.json
 project.fragment.lock.json
 artifacts/
 **/Properties/launchSettings.json
-
+.DS_Store
 *_i.c
 *_p.c
 *_i.h
