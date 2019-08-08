@@ -12,7 +12,7 @@ namespace ConsoleApp1
     {
         public RedPackage()
         {
-            FixMoney = new List<double>() { 10, 8, 5, 20 };
+            FixMoney = new List<double>();
             FixMoneyLevel = FixMoney.Count;
             RealContainer = new List<double>();
             SendMoney = new List<double>();
@@ -46,10 +46,13 @@ namespace ConsoleApp1
         /// </summary>
         public void GenerateRedPackage()
         {
+            //求固定红包的概率
             int fixCount = (int)Math.Floor(Count * FixMoneyLevel / 100.0);
+            //求固定红包的数量
             if (fixCount > FixMoney.Count)
                 fixCount = FixMoney.Count;
 
+            //生成固定金额的红包
             for (int i = 0; i < fixCount; i++)
             {
                 if (Money > 0)
@@ -70,10 +73,12 @@ namespace ConsoleApp1
                     }
                 }
             }
+            //求随机红包的数量
             int randomCount = Count - fixCount;
-            Console.WriteLine("radom money balance:{0}", Money);
+            Console.WriteLine("需要产生随机红包的金额:{0}", Money);
+            //产生随机红包
             randNum(randomCount);
-
+            //为红包池进行随机排序 
             RealContainer=RealContainer.OrderBy(x => Guid.NewGuid()).ToList();
         }
 
@@ -127,8 +132,8 @@ namespace ConsoleApp1
         static void Main(string[] args)
         {
             RedPackage redPackage = new RedPackage();
-
-            redPackage.Money = 100;//100元
+            redPackage.FixMoney = new List<double> { 10, 30 };
+            redPackage.Money = 50;//100元
             redPackage.Count = 10;
             redPackage.FixMoneyLevel = 50;//50%的固定
             redPackage.GenerateRedPackage();
@@ -136,7 +141,7 @@ namespace ConsoleApp1
             for (int i = 0; i < redPackage.RealContainer.Count; i++)
             {
                 sum += redPackage.RealContainer[i];
-                Console.WriteLine("第:{0}个,本次领取的金额:{1},已经领取的总金额:{2}", i, redPackage.RealContainer[i], sum);
+                Console.WriteLine("领取第:{0}个,本次领取的金额:{1},已经领取红包总额统计:{2}", i, redPackage.RealContainer[i], sum);
             }
             Console.ReadKey();
         }
