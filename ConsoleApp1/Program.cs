@@ -16,6 +16,7 @@ namespace ConsoleApp1
             FixMoneyLevel = FixMoney.Count;
             RealContainer = new List<double>();
             SendMoney = new List<double>();
+            RandomRealContainer = new Queue<double>();
         }
         /// <summary>
         /// 已发出金额
@@ -29,6 +30,10 @@ namespace ConsoleApp1
         /// 真实红包容器
         /// </summary>
         public List<double> RealContainer { get; set; }
+        /// <summary>
+        /// 真实红包容器
+        /// </summary>
+        public Queue<double> RandomRealContainer { get; set; }
         /// <summary>
         /// 红包总余额
         /// </summary>
@@ -48,7 +53,7 @@ namespace ConsoleApp1
         {
             //求固定红包的概率
             int fixCount = (int)Math.Floor(Count * FixMoneyLevel / 100.0);
-            //求固定红包的数量
+            //求固定红包的数量，如果固定红包没那么多，会把名额留给随机红包
             if (fixCount > FixMoney.Count)
                 fixCount = FixMoney.Count;
 
@@ -80,10 +85,28 @@ namespace ConsoleApp1
             randNum(randomCount);
             //为红包池进行随机排序 
             RealContainer=RealContainer.OrderBy(x => Guid.NewGuid()).ToList();
+            //添加到随机队列
+            foreach (var item in RealContainer)
+                RandomRealContainer.Enqueue(item);
         }
 
-        //拆分数值生成若干个和等于该数值随机值
-        public void randNum(int num)
+       /// <summary>
+       /// 抢红包
+       /// </summary>
+       /// <param name="username"></param>
+       /// <param name="container"></param>
+       /// <returns></returns>
+        public double receiver(string username)
+        {
+            double val = RandomRealContainer.Dequeue();
+            Console.WriteLine("这个用户:{0}，领取了一个红包:{1}",username,val);
+            return val;
+        }
+        /// <summary>
+        /// 拆分数值生成若干个和等于该数值随机值
+        /// </summary>
+        /// <param name="num"></param>
+        private void randNum(int num)
         {
             double totalAmount = this.Money;
             List<double> list = new List<double>();
@@ -113,8 +136,14 @@ namespace ConsoleApp1
 
 
         }
-
-        protected static double NextDouble(Random random, double miniDouble, double maxiDouble)
+        /// <summary>
+        /// 产生随机数
+        /// </summary>
+        /// <param name="random"></param>
+        /// <param name="miniDouble"></param>
+        /// <param name="maxiDouble"></param>
+        /// <returns></returns>
+        private double NextDouble(Random random, double miniDouble, double maxiDouble)
         {
             if (random != null)
             {
@@ -137,12 +166,16 @@ namespace ConsoleApp1
             redPackage.Count = 10;
             redPackage.FixMoneyLevel = 50;//50%的固定
             redPackage.GenerateRedPackage();
-            double sum = 0;
-            for (int i = 0; i < redPackage.RealContainer.Count; i++)
+            Console.WriteLine("开始产生红包");
+            foreach(var item in redPackage.RealContainer)
             {
-                sum += redPackage.RealContainer[i];
-                Console.WriteLine("领取第:{0}个,本次领取的金额:{1},已经领取红包总额统计:{2}", i, redPackage.RealContainer[i], sum);
+                Console.Write(item+",");
             }
+            Console.WriteLine("开始模拟领红包");
+            redPackage.receiver("张三");
+            redPackage.receiver("郴四");
+            redPackage.receiver("mike");
+
             Console.ReadKey();
         }
 
