@@ -84,22 +84,23 @@ namespace ConsoleApp1
             //产生随机红包
             randNum(randomCount);
             //为红包池进行随机排序 
-            RealContainer=RealContainer.OrderBy(x => Guid.NewGuid()).ToList();
+            RealContainer = RealContainer.OrderBy(x => Guid.NewGuid()).ToList();
             //添加到随机队列
             foreach (var item in RealContainer)
                 RandomRealContainer.Enqueue(item);
+            Console.WriteLine("红包金额剩余_balance:{0}", Money);
         }
 
-       /// <summary>
-       /// 抢红包
-       /// </summary>
-       /// <param name="username"></param>
-       /// <param name="container"></param>
-       /// <returns></returns>
+        /// <summary>
+        /// 抢红包
+        /// </summary>
+        /// <param name="username"></param>
+        /// <param name="container"></param>
+        /// <returns></returns>
         public double receiver(string username)
         {
             double val = RandomRealContainer.Dequeue();
-            Console.WriteLine("这个用户:{0}，领取了一个红包:{1}",username,val);
+            Console.WriteLine("这个用户:{0}，领取了一个红包:{1}", username, val);
             return val;
         }
         /// <summary>
@@ -108,7 +109,7 @@ namespace ConsoleApp1
         /// <param name="num"></param>
         private void randNum(int num)
         {
-            double totalAmount = this.Money;
+           
             List<double> list = new List<double>();
             double minAmount = 0.01;
             Random r = new Random();
@@ -118,15 +119,16 @@ namespace ConsoleApp1
                 if (i == num - 1)
                 {
                     //最后一次
-                    money = totalAmount;
+                    money = Money;
+                    Money = 0;
                 }
                 else
                 {
-                    double safeAmount = (totalAmount - (num - i) * minAmount) / (num - i);
+                    double safeAmount = (Money - (num - i) * minAmount) / (num - i);
                     money = NextDouble(r, minAmount * 100, safeAmount * 100) / 100;
                     money = Math.Round(money, 2, MidpointRounding.AwayFromZero);
-                    totalAmount = totalAmount - money;
-                    totalAmount = Math.Round(totalAmount, 2, MidpointRounding.AwayFromZero);
+                    Money = Money - money;
+                    Money = Math.Round(Money, 2, MidpointRounding.AwayFromZero);
                 }
                 list.Add(money);
                 this.RealContainer.Add(money);
@@ -167,9 +169,9 @@ namespace ConsoleApp1
             redPackage.FixMoneyLevel = 50;//50%的固定
             redPackage.GenerateRedPackage();
             Console.WriteLine("开始产生红包");
-            foreach(var item in redPackage.RealContainer)
+            foreach (var item in redPackage.RealContainer)
             {
-                Console.Write(item+",");
+                Console.Write(item + ",");
             }
             Console.WriteLine("开始模拟领红包");
             redPackage.receiver("张三");
