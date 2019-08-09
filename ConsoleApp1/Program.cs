@@ -10,14 +10,17 @@ namespace ConsoleApp1
     /// </summary>
     class RedPackage
     {
-        public RedPackage()
+        public RedPackage() : this(null) { }
+        public RedPackage(IRedPackageRepository redPackageRepository)
         {
             FixMoney = new List<double>();
             FixMoneyLevel = FixMoney.Count;
             RealContainer = new List<double>();
             SendMoney = new List<double>();
             RandomRealContainer = new Queue<double>();
+            this.redPackageRepository = redPackageRepository;
         }
+        private IRedPackageRepository redPackageRepository;
         /// <summary>
         /// 已发出金额
         /// </summary>
@@ -90,16 +93,31 @@ namespace ConsoleApp1
                 RandomRealContainer.Enqueue(item);
             Console.WriteLine("红包金额剩余_balance:{0}", Money);
         }
-
+        public string saveRedToDb()
+        {
+            string redId = Guid.NewGuid().ToString();
+            if (redPackageRepository != null)
+                redPackageRepository.Save(redId, RealContainer);
+            return redId;
+        }
         /// <summary>
         /// 抢红包
         /// </summary>
         /// <param name="username"></param>
-        /// <param name="container"></param>
+        /// <param name="redId"></param>
         /// <returns></returns>
-        public double receiver(string username)
+        public double receiver(string username, string redId)
         {
-            double val = RandomRealContainer.Dequeue();
+            double val = 0;
+            if (redPackageRepository != null)
+            {
+                redPackageRepository.Get(redId);
+            }
+            else
+            {
+                val = RandomRealContainer.Dequeue();
+            }
+
             Console.WriteLine("这个用户:{0}，领取了一个红包:{1}", username, val);
             return val;
         }
@@ -109,7 +127,7 @@ namespace ConsoleApp1
         /// <param name="num"></param>
         private void randNum(int num)
         {
-           
+
             List<double> list = new List<double>();
             double minAmount = 0.01;
             Random r = new Random();
@@ -162,21 +180,23 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            RedPackage redPackage = new RedPackage();
+            IRedPackageRepository redPackageRepository = new RedisRedPackageRepository();
+            RedPackage redPackage = new RedPackage(redPackageRepository);
             redPackage.FixMoney = new List<double> { 10, 30 };
             redPackage.Money = 50;//100元
             redPackage.Count = 10;
             redPackage.FixMoneyLevel = 50;//50%的固定
             redPackage.GenerateRedPackage();
+            string redId = redPackage.saveRedToDb();
             Console.WriteLine("开始产生红包");
             foreach (var item in redPackage.RealContainer)
             {
                 Console.Write(item + ",");
             }
             Console.WriteLine("开始模拟领红包");
-            redPackage.receiver("张三");
-            redPackage.receiver("郴四");
-            redPackage.receiver("mike");
+            redPackage.receiver("张三", redId);
+            redPackage.receiver("郴四", redId);
+            redPackage.receiver("mike", redId);
 
             Console.ReadKey();
         }
