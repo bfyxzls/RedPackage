@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 
 namespace ConsoleApp1
@@ -198,7 +199,15 @@ namespace ConsoleApp1
 
             int days = DateTime.DaysInMonth(2019, 7);
             Console.WriteLine("days=" + days);
+
+            CultureInfo cultInfo = CultureInfo.GetCultureInfo("zh-CN");
+            int week = WeekOfYear(new DateTime(2019, 07, 01), cultInfo);
+            Console.WriteLine("week:" + week);
             Console.ReadKey();
+        }
+        public static int WeekOfYear(DateTime dt, CultureInfo ci)
+        {
+            return ci.Calendar.GetWeekOfYear(dt, ci.DateTimeFormat.CalendarWeekRule, DayOfWeek.Monday);
         }
 
 
