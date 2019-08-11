@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace ConsoleApp1
 {
@@ -180,8 +179,7 @@ namespace ConsoleApp1
     {
         static void Main(string[] args)
         {
-            IRedPackageRepository redPackageRepository = new RedisRedPackageRepository();
-            RedPackage redPackage = new RedPackage(redPackageRepository);
+            RedPackage redPackage = new RedPackage();
             redPackage.FixMoney = new List<double> { 10, 30 };
             redPackage.Money = 50;//100元
             redPackage.Count = 10;
@@ -198,6 +196,8 @@ namespace ConsoleApp1
             redPackage.receiver("郴四", redId);
             redPackage.receiver("mike", redId);
 
+            int days = DateTime.DaysInMonth(2019, 7);
+            Console.WriteLine("days=" + days);
             Console.ReadKey();
         }
 
